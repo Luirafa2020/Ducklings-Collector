@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Seguidor Base Frame 1 -->
+  <rect x="3" y="13" width="10" height="2" fill="#4169E1" fill-opacity="0.35"/><rect x="4" y="6" width="8" height="6" fill="#FFE48A"/><rect x="5" y="7" width="6" height="4" fill="#FFFACD"/><rect x="6" y="8" width="4" height="2" fill="#FFFFE0"/><rect x="5" y="10" width="6" height="2" fill="#FFD700" fill-opacity="0.6"/>
+  <!-- Cabeça Base --> <rect x="6" y="3" width="4" height="4" fill="#FFE48A"/> <rect x="6" y="6" width="4" height="1" fill="#FFD700" fill-opacity="0.5"/>
+  <!-- Capacete Viking -->
+  <rect x="5" y="2" width="6" height="2" fill="#A9A9A9"/> <!-- Base -->
+  <rect x="4" y="3" width="8" height="2" fill="#C0C0C0"/> <!-- Corpo -->
+  <rect x="7" y="1" width="2" height="2" fill="#A9A9A9"/> <!-- Detalhe topo -->
+  <rect x="6" y="2" width="4" height="1" fill="#DCDCDC"/> <!-- Highlight -->
+  <!-- Chifres -->
+  <rect x="3" y="1" width="1" height="2" fill="#E0E0E0"/> <rect x="2" y="2" width="1" height="2" fill="white"/>
+  <rect x="12" y="1" width="1" height="2" fill="#E0E0E0"/> <rect x="13" y="2" width="1" height="2" fill="white"/>
+  <!-- Olhos Visíveis --> <rect x="7" y="5" width="1" height="1" fill="#222222"/><rect x="9" y="5" width="1" height="1" fill="#222222"/>
+  <!-- Bico --> <rect x="9" y="4" width="3" height="2" fill="#FFA500"/><rect x="10" y="5" width="2" height="1" fill="#FF8C00"/>
+  <!-- Asas e Linha d'água -->
+  <rect x="3" y="7" width="2" height="3" fill="#FFE48A"/><rect x="3" y="8" width="1" height="2" fill="#FFFACD"/><rect x="3" y="9" width="1" height="1" fill="#C6A84F"/><rect x="11" y="7" width="2" height="3" fill="#FFE48A"/><rect x="12" y="8" width="1" height="2" fill="#FFFACD"/><rect x="12" y="9" width="1" height="1" fill="#C6A84F"/>
+  <rect x="4" y="12" width="8" height="2" fill="#6495ED"/><rect x="3" y="12" width="2" height="1" fill="#4169E1"/><rect x="6" y="13" width="3" height="1" fill="#4169E1"/><rect x="11" y="12" width="1" height="1" fill="#4169E1"/><rect x="5" y="12" width="2" height="1" fill="#87CEFA"/><rect x="9" y="12" width="2" height="1" fill="#87CEFA"/>
+</svg>

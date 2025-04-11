@@ -1,0 +1,43 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32" shape-rendering="crispEdges">
+  <!-- Sombra na Água -->
+  <rect x="3" y="13" width="10" height="2" fill="#4169E1" fill-opacity="0.2"/> <!-- Mais sutil -->
+
+  <!-- Corpo Base (Escuro) -->
+  <rect x="4" y="6" width="8" height="6" fill="#555555"/> <!-- Cinza Escuro -->
+  <!-- Destaque Sutil Corpo -->
+  <rect x="5" y="7" width="6" height="4" fill="#6E6E6E"/>
+  <rect x="6" y="8" width="4" height="2" fill="#7D7D7D"/>
+   <!-- Sombra Barriga -->
+  <rect x="5" y="10" width="6" height="2" fill="#404040" fill-opacity="0.8"/>
+
+  <!-- Cabeça Base -->
+  <rect x="6" y="3" width="4" height="4" fill="#555555"/>
+  <!-- Destaque Sutil Cabeça -->
+  <rect x="7" y="4" width="2" height="2" fill="#6E6E6E"/>
+
+  <!-- Bico (Tom diferente) -->
+  <rect x="9" y="4" width="3" height="2" fill="#8B4513"/> <!-- Marrom -->
+  <rect x="10" y="5" width="2" height="1" fill="#A0522D"/> <!-- Sienna -->
+
+  <!-- Olhos (Vermelhos) -->
+  <rect x="7" y="5" width="1" height="1" fill="#FF0000"/> <!-- Vermelho Brilhante -->
+  <rect x="9" y="5" width="1" height="1" fill="#FF0000"/>
+  <rect x="7" y="4" width="1" height="1" fill="#8B0000"/> <!-- Sombra sobrancelha má -->
+  <rect x="9" y="4" width="1" height="1" fill="#8B0000"/>
+
+  <!-- Asas -->
+  <rect x="3" y="7" width="2" height="3" fill="#555555"/>
+  <rect x="3" y="8" width="1" height="2" fill="#6E6E6E"/>
+  <rect x="3" y="9" width="1" height="1" fill="#333333"/> <!-- Sombra Asa -->
+  <rect x="11" y="7" width="2" height="3" fill="#555555"/>
+  <rect x="12" y="8" width="1" height="2" fill="#6E6E6E"/>
+  <rect x="12" y="9" width="1" height="1" fill="#333333"/>
+
+  <!-- Efeito Linha D'água -->
+  <rect x="4" y="12" width="8" height="2" fill="#6495ED"/>
+  <rect x="3" y="12" width="2" height="1" fill="#4169E1"/>
+  <rect x="6" y="13" width="3" height="1" fill="#4169E1"/>
+  <rect x="11" y="12" width="1" height="1" fill="#4169E1"/>
+  <rect x="5" y="12" width="2" height="1" fill="#87CEFA"/>
+  <rect x="9" y="12" width="2" height="1" fill="#87CEFA"/>
+</svg>

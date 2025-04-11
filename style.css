@@ -1,0 +1,73 @@
+﻿html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #333; font-family: 'Press Start 2P', cursive; image-rendering: pixelated; cursor: url('./cursor.png') 4 4, default; }
+.screen { width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 5vh; box-sizing: border-box; visibility: hidden; opacity: 0; transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+.screen.visible { visibility: visible; opacity: 1; }
+.hidden { display: none !important; }
+
+/* --- Menu Principal --- */
+#main-menu { background-image: url('./background.jpg'); background-size: cover; background-position: center center; background-repeat: no-repeat; gap: 30px; justify-content: center; padding-top: 0; }
+#main-menu h1 { font-size: 2.8em; color: #FFD700; text-shadow: 3px 3px 0px #8B4513, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; margin-bottom: 20px; }
+.menu-button-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+.pixel-menu-svg-button { cursor: url('./selection.png') 4 4, pointer; image-rendering: pixelated; transition: transform 0.1s ease-out; filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.5)); }
+#start-game-button { width: 200px; height: 56px; }
+#customize-button { width: 200px; height: 56px; }
+.save-info { margin-top: 30px; color: #fff; font-size: 0.9em; background-color: rgba(0, 0, 0, 0.5); padding: 5px 10px; border: 1px solid #444; text-shadow: 1px 1px 0 #000; }
+
+/* --- Tela de Customização --- */
+#customization-screen { background-image: url('./background_customize.png'); background-size: cover; background-position: center center; background-repeat: no-repeat; gap: 10px; /* Menor gap geral */ justify-content: flex-start; padding-top: 6vh; padding-bottom: 4vh; }
+/* Título Principal da Tela de Customização */
+#customize-title {
+    font-size: 1.8em;
+    color: #9370DB; /* Roxo Médio */
+    text-shadow: 2px 2px 0px #4B0082, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Sombra mais escura */
+    margin-bottom: 20px; /* Mais espaço abaixo */
+    font-family: 'Press Start 2P', cursive; /* Garante a fonte */
+}
+.customization-section { width: 90%; max-width: 700px; margin-bottom: 15px; border: 3px solid rgba(220, 138, 255, 0.3); padding: 10px 15px; background-color: rgba(0,0,0,0.4); border-radius: 0; }
+/* Título de cada Seção (Seu Pato / Patinhos) */
+.customization-section .section-title {
+    font-size: 1.2em; /* Aumentado um pouco */
+    color: #C39BD3; /* Roxo mais claro */
+    text-shadow: 1px 1px 0 #311B92; /* Sombra roxa escura */
+    margin-bottom: 12px; text-align: center; border-bottom: 2px solid rgba(147, 112, 219, 0.4); /* Borda Roxa */
+    padding-bottom: 6px;
+    font-family: 'Press Start 2P', cursive; /* Garante a fonte */
+}
+.options-container { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 10px; overflow-x: auto; overflow-y: hidden; padding: 10px 5px; max-height: none; scrollbar-width: thin; scrollbar-color: #888 #333; }
+.options-container::-webkit-scrollbar { height: 8px; }
+.options-container::-webkit-scrollbar-track { background: #333; }
+.options-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 0px; border: 1px solid #444; }
+.customization-option { background-color: rgba(0, 0, 0, 0.6); border: 2px solid #777; padding: 6px; text-align: center; transition: background-color 0.2s, border-color 0.2s; color: #ccc; width: auto; flex-shrink: 0; }
+.customization-option:not(.locked) { cursor: url('./selection.png') 4 4, pointer; }
+.customization-option.locked { cursor: url('./proibido.png') 4 4, not-allowed; opacity: 0.6; }
+.customization-option img { width: 56px; /* Tamanho do preview ajustado */ height: 56px; image-rendering: pixelated; display: block; margin: 0 auto 3px auto; }
+.customization-option span { font-size: 0.6em; display: block; text-shadow: 1px 1px 0 #000; white-space: nowrap; }
+.customization-option.selected { border-color: #FFD700; background-color: rgba(80, 60, 0, 0.8); }
+.customization-option.locked::after { content: " (Fase " attr(data-unlock-phase) ")"; display: block; font-size: 0.5em; color: #ff8080; text-shadow: 1px 1px 0 #500; }
+#customization-screen .menu-button-container { width: auto; margin-top: 15px; }
+#back-to-menu-button { width: 120px; height: 56px; filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.5)); }
+
+/* --- Container do Jogo --- */
+#game-container { background-color: transparent; justify-content: flex-start; align-items: flex-start; }
+@keyframes waterTileFlow { 0% { background-position: 0px 0px; } 100% { background-position: -128px 64px; } }
+#gameCanvas { display: block; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; background-image: url('./svg/water-tile.svg'); background-size: 64px 64px; image-rendering: pixelated; animation: waterTileFlow 16s linear infinite; }
+.hide-cursor { cursor: none !important; }
+#score, #phase-display { position: absolute; background-color: rgba(0, 0, 0, 0.7); color: white; padding: 8px 12px; border-radius: 0px; border: 2px solid #222; z-index: 10; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.9); font-size: 1em; font-weight: normal; letter-spacing: 1px; text-transform: none; image-rendering: pixelated; font-smooth: never; -webkit-font-smoothing: none; -moz-osx-font-smoothing: grayscale; }
+#score { top: 15px; left: 15px; }
+#phase-display { top: 15px; right: 15px; }
+
+/* --- Overlay de Conclusão --- */
+#completion-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.88); color: white; padding: 25px 35px; border: 5px solid #cc8800; border-radius: 0; text-align: center; z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; image-rendering: pixelated; font-smooth: never; -webkit-font-smoothing: none; -moz-osx-font-smoothing: grayscale; }
+#completion-phase { font-size: 1.4em; color: #FFFF00; text-shadow: 2px 2px 0px #FF8C00; margin-bottom: 5px; }
+#completion-result { font-size: 0.9em; margin-bottom: 5px; }
+#star-container { display: flex; gap: 10px; margin-bottom: 0px; }
+.star-img { width: 72px; height: 72px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; }
+#star-count-text { font-size: 0.8em; margin-bottom: 10px; margin-top: 5px; }
+.button-container { display: flex; gap: 15px; margin-top: 10px; }
+.pixel-button { width: 180px; height: 48px; cursor: url('./selection.png') 4 4, pointer; image-rendering: pixelated; transition: transform 0.08s ease-out; filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.5)); }
+
+/* Efeito hover genérico */
+.pixel-menu-svg-button:hover, .pixel-button:hover { transform: translateY(-4px) scale(1.03); filter: drop-shadow(4px 4px 3px rgba(0,0,0,0.4)); }
+.pixel-menu-svg-button:active, .pixel-button:active { transform: translateY(2px) scale(0.97); filter: drop-shadow(2px 2px 1px rgba(0,0,0,0.6)); }
+
+/* Estilo global para texto SVG */
+.svg-button-text-menu, .svg-button-text-small, .svg-button-text-overlay { user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
