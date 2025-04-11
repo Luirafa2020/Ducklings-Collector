@@ -1,9 +1,12 @@
 ﻿// --- Elementos DOM ---
 const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d'); const scoreElement = document.getElementById('score'); const phaseDisplayElement = document.getElementById('phase-display'); const mainMenuScreen = document.getElementById('main-menu'); const customizationScreen = document.getElementById('customization-screen'); const gameContainerScreen = document.getElementById('game-container'); const startGameButton = document.getElementById('start-game-button'); const customizeButton = document.getElementById('customize-button'); const highestPhaseInfo = document.getElementById('highest-phase-info');
-const playerCustomizationOptionsContainer = document.getElementById('player-customization-options'); const followerCustomizationOptionsContainer = document.getElementById('follower-customization-options'); const backToMenuButton = document.getElementById('back-to-menu-button'); const completionOverlay = document.getElementById('completion-overlay'); const completionPhaseElement = document.getElementById('completion-phase'); const completionResultElement = document.getElementById('completion-result'); const starElements = [ document.getElementById('star1'), document.getElementById('star2'), document.getElementById('star3') ]; const starCountTextElement = document.getElementById('star-count-text'); const retrySvgButton = document.getElementById('retry-svg-button'); const nextPhaseSvgButton = document.getElementById('next-phase-svg-button');
+const playerCustomizationOptionsContainer = document.getElementById('player-customization-options'); const followerCustomizationOptionsContainer = document.getElementById('follower-customization-options'); const backToMenuButton = document.getElementById('back-to-menu-button'); const completionOverlay = document.getElementById('completion-overlay'); const completionPhaseElement = document.getElementById('completion-phase'); const completionResultElement = document.getElementById('completion-result'); const starElements = [ document.getElementById('star1'), document.getElementById('star2'), document.getElementById('star3') ]; const starCountTextElement = document.getElementById('star-count-text');
+const retrySvgButton = document.getElementById('retry-svg-button'); const nextPhaseSvgButton = document.getElementById('next-phase-svg-button'); const backToMenuCompleteButton = document.getElementById('back-to-menu-complete-button');
+const unlockNotificationElement = document.getElementById('unlock-notification'); const unlockImageElement = document.getElementById('unlock-image'); const unlockTextElement = document.getElementById('unlock-text');
+let notificationTimeout = null;
 
 // --- Configurações ---
-const INITIAL_DUCKLING_COUNT = 10; const DUCKLING_COUNT_INCREMENT = 2; const PLAYER_SPEED = 0.08; const FOLLOWER_SPEED = 0.12; const RECRUIT_RADIUS = 50; const FOLLOW_DISTANCE = 40; const ANIMATION_SPEED = 15; const BOBBING_AMOUNT = 1.5; const FLIP_THRESHOLD = 0.1; const BACKGROUND_MUSIC_VOLUME = 0.15; const BASE_EVIL_SPAWN_CHANCE = 0.05; const EVIL_CHANCE_INCREMENT = 0.04; const MAX_EVIL_SPAWN_CHANCE = 0.5; const EVIL_ATTACK_RADIUS = 35; const EVIL_ATTACK_COOLDOWN = 180; const CLICK_REMOVE_RADIUS = 25; const THREE_STAR_THRESHOLD = 90; const TWO_STAR_THRESHOLD = 60; const ONE_STAR_THRESHOLD = 30; const UI_HOVER_VOLUME = 0.25; const UI_CLICK_VOLUME = 0.9; const GAME_CLICK_VOLUME = 0.8;
+const INITIAL_DUCKLING_COUNT = 10; const DUCKLING_COUNT_INCREMENT = 2; const PLAYER_SPEED = 0.08; const FOLLOWER_SPEED = 0.12; const RECRUIT_RADIUS = 50; const FOLLOW_DISTANCE = 40; const ANIMATION_SPEED = 15; const BOBBING_AMOUNT = 1.5; const FLIP_THRESHOLD = 0.1; const BACKGROUND_MUSIC_VOLUME = 0.15; const BASE_EVIL_SPAWN_CHANCE = 0.05; const EVIL_CHANCE_INCREMENT = 0.04; const MAX_EVIL_SPAWN_CHANCE = 0.5; const EVIL_ATTACK_RADIUS = 35; const EVIL_ATTACK_COOLDOWN = 180; const CLICK_REMOVE_RADIUS = 25; const THREE_STAR_THRESHOLD = 90; const TWO_STAR_THRESHOLD = 60; const ONE_STAR_THRESHOLD = 30; const UI_HOVER_VOLUME = 0.25; const UI_CLICK_VOLUME = 0.9; const GAME_CLICK_VOLUME = 0.8; const NOTIFICATION_DURATION = 4000;
 let canvasWidth = window.innerWidth; let canvasHeight = window.innerHeight; canvas.width = canvasWidth; canvas.height = canvasHeight; ctx.imageSmoothingEnabled = false;
 
 // --- Recursos ---
@@ -42,35 +45,7 @@ function imageLoaded() { imagesLoaded++; if (imagesLoaded === totalImages) { con
 function getRandomPosition() { const margin = 50; return { x: margin + Math.random() * (canvasWidth - margin * 2), y: margin + Math.random() * (canvasHeight - margin * 2) }; }
 function distance(obj1, obj2) { const dx = obj1.x - obj2.x; const dy = obj1.y - obj2.y; return Math.sqrt(dx * dx + dy * dy); }
 function lerp(start, end, amount) { return start + (end - start) * amount; }
-
-// --- Reset/Setup do Pato (Lógica de aplicação corrigida) ---
-function resetDuckState(duck, isPlayer = false, isEvil = false) {
-    const pos = isPlayer ? { x: canvasWidth / 2, y: canvasHeight / 2 } : getRandomPosition();
-    duck.x = pos.x; duck.y = pos.y; duck.prevX = pos.x; duck.prevY = pos.y; duck.targetX = pos.x; duck.targetY = pos.y; duck.isEvil = isEvil;
-    duck.images = [new Image(), new Image()];
-
-    if (isPlayer) {
-        const customization = customizations.find(c => c.id === selectedPlayerCustomizationId) || customizations[0];
-        duck.images[0].src = customization.playerFrames[0]; // Aplica direto a seleção salva
-        duck.images[1].src = customization.playerFrames[1];
-        duck.drawWidth = playerDrawWidth; duck.drawHeight = playerDrawHeight; duck.followers = [];
-    } else if (isEvil) {
-        duck.images[0].src = './svg/evil-duckling-frame1.svg';
-        duck.images[1].src = './svg/evil-duckling-frame2.svg';
-        duck.drawWidth = evilDrawWidth; duck.drawHeight = evilDrawHeight;
-        duck.attackCooldown = 0; duck.isFollowing = false;
-    } else { // Seguidor normal/bom
-        const customization = customizations.find(c => c.id === selectedFollowerCustomizationId) || customizations[0]; // Usa a seleção SALVA para seguidores
-        // Não precisa mais verificar a fase AQUI, apenas pega a seleção salva
-         duck.images[0].src = customization.followerFrames[0];
-         duck.images[1].src = customization.followerFrames[1];
-        duck.drawWidth = followerDrawWidth; duck.drawHeight = followerDrawHeight;
-        duck.isFollowing = false;
-    }
-    duck.animationFrame = 0; duck.animationTick = Math.floor(Math.random() * ANIMATION_SPEED);
-    duck.isMoving = false; duck.bobbingOffset = 0; duck.facingDirection = 'right';
-    return duck;
-}
+function resetDuckState(duck, isPlayer = false, isEvil = false) { const pos = isPlayer ? { x: canvasWidth / 2, y: canvasHeight / 2 } : getRandomPosition(); duck.x = pos.x; duck.y = pos.y; duck.prevX = pos.x; duck.prevY = pos.y; duck.targetX = pos.x; duck.targetY = pos.y; duck.isEvil = isEvil; duck.images = [new Image(), new Image()]; if (isPlayer) { const customization = customizations.find(c => c.id === selectedPlayerCustomizationId) || customizations[0]; duck.images[0].src = customization.playerFrames[0]; duck.images[1].src = customization.playerFrames[1]; duck.drawWidth = playerDrawWidth; duck.drawHeight = playerDrawHeight; duck.followers = []; } else if (isEvil) { duck.images[0].src = './svg/evil-duckling-frame1.svg'; duck.images[1].src = './svg/evil-duckling-frame2.svg'; duck.drawWidth = evilDrawWidth; duck.drawHeight = evilDrawHeight; duck.attackCooldown = 0; duck.isFollowing = false; } else { const customization = customizations.find(c => c.id === selectedFollowerCustomizationId) || customizations[0]; duck.images[0].src = customization.followerFrames[0]; duck.images[1].src = customization.followerFrames[1]; duck.drawWidth = followerDrawWidth; duck.drawHeight = followerDrawHeight; duck.isFollowing = false; } duck.animationFrame = 0; duck.animationTick = Math.floor(Math.random() * ANIMATION_SPEED); duck.isMoving = false; duck.bobbingOffset = 0; duck.facingDirection = 'right'; return duck; }
 
 // --- Inicialização do Jogo/Fase ---
 function initGame() {
@@ -88,11 +63,46 @@ function initGame() {
 // --- Lógica do Jogo ---
 function updateDuck(duck, leader = null) { /* ...código sem mudanças... */ duck.prevX = duck.x; duck.prevY = duck.y; if (leader) { const dist = distance(duck, leader); if (dist > FOLLOW_DISTANCE) { const angle = Math.atan2(leader.y - duck.y, leader.x - duck.x); duck.targetX = leader.x - Math.cos(angle) * FOLLOW_DISTANCE * 0.9; duck.targetY = leader.y - Math.sin(angle) * FOLLOW_DISTANCE * 0.9; duck.x = lerp(duck.x, duck.targetX, FOLLOWER_SPEED); duck.y = lerp(duck.y, duck.targetY, FOLLOWER_SPEED); } else { duck.targetX = duck.x; duck.targetY = duck.y; } } else { duck.x = lerp(duck.x, duck.targetX, PLAYER_SPEED); duck.y = lerp(duck.y, duck.targetY, PLAYER_SPEED); duck.x = Math.max(duck.drawWidth / 2, Math.min(canvasWidth - duck.drawWidth / 2, duck.x)); duck.y = Math.max(duck.drawHeight / 2, Math.min(canvasHeight - duck.drawHeight / 2, duck.y)); } const dx = duck.x - duck.prevX; if (dx > FLIP_THRESHOLD) { duck.facingDirection = 'right'; } else if (dx < -FLIP_THRESHOLD) { duck.facingDirection = 'left'; } const moved = Math.abs(duck.x - duck.prevX) > 0.1 || Math.abs(duck.y - duck.prevY) > 0.1; duck.isMoving = moved; if (duck.isMoving) { duck.animationTick++; if (duck.animationTick >= ANIMATION_SPEED) { duck.animationFrame = (duck.animationFrame + 1) % duck.images.length; duck.animationTick = 0; } duck.bobbingOffset = Math.sin((duck.animationFrame + duck.animationTick / ANIMATION_SPEED) * Math.PI) * BOBBING_AMOUNT; } else { duck.animationTick = 0; duck.bobbingOffset = 0; } if (duck.isEvil && duck.attackCooldown > 0) { duck.attackCooldown--; } }
 function setStarAppearance(starImgElement, isFilled) { starImgElement.src = isFilled ? starFilledPath : starEmptyPath; }
-function showCompletionScreen() { const survivalRate = initialGoodDucklings > 0 ? (score / initialGoodDucklings) * 100 : 100; if (survivalRate >= THREE_STAR_THRESHOLD) starsEarned = 3; else if (survivalRate >= TWO_STAR_THRESHOLD) starsEarned = 2; else if (survivalRate >= ONE_STAR_THRESHOLD) starsEarned = 1; else starsEarned = 0; console.log(`Fase ${currentPhase} | Bons Iniciais: ${initialGoodDucklings} | Salvos (Score): ${score} | Taxa: ${survivalRate.toFixed(1)}% | Duckstars: ${starsEarned}`); for (let i = 0; i < 3; i++) { setStarAppearance(starElements[i], i < starsEarned); } completionPhaseElement.textContent = `Fase ${currentPhase} Completa!`; completionResultElement.textContent = `Patos Salvos: ${score} / ${initialGoodDucklings}`; starCountTextElement.textContent = `(${starsEarned} Duckstar${starsEarned !== 1 ? 's' : ''}!)`; highestPhaseReached = Math.max(highestPhaseReached, currentPhase); const currentBestStars = phaseStars[currentPhase] || 0; phaseStars[currentPhase] = Math.max(currentBestStars, starsEarned); saveGameData(); canvas.classList.remove('hide-cursor'); completionOverlay.classList.remove('hidden'); }
-function update() { if (gameComplete) return; globalTick++; updateDuck(player); let leader = player; for (const follower of player.followers) { updateDuck(follower, leader); leader = follower; } let goodDucksLeftInWild = false; for (let i = wildDucklings.length - 1; i >= 0; i--) { const duckling = wildDucklings[i]; if (!duckling.isFollowing && globalTick % 120 === 0 && Math.random() < 0.2) { duckling.targetX = duckling.x + (Math.random() - 0.5) * 50; duckling.targetY = duckling.y + (Math.random() - 0.5) * 50; } updateDuck(duckling); if (duckling.isEvil) { if (duckling.attackCooldown <= 0) { for (let j = player.followers.length - 1; j >= 0; j--) { const follower = player.followers[j]; if (distance(duckling, follower) < EVIL_ATTACK_RADIUS) { playLoadedSound(dieSoundBuffer, 1.0); player.followers.splice(j, 1); score--; updateScoreDisplay(); duckling.attackCooldown = EVIL_ATTACK_COOLDOWN; break; } } } } else { goodDucksLeftInWild = true; if (distance(player, duckling) < RECRUIT_RADIUS) { duckling.isFollowing = true; duckling.targetX = player.x; duckling.targetY = player.y; player.followers.unshift(duckling); wildDucklings.splice(i, 1); score++; updateScoreDisplay(); playLoadedSound(recruitSoundBuffer, 1.0); } } } if (!goodDucksLeftInWild && !gameComplete) { console.log("Condição de conclusão atingida."); gameComplete = true; stopBackgroundMusic(); playLoadedSound(completeSoundBuffer, 1.0); showCompletionScreen(); } }
+function displayUnlockNotification(itemName, imageSrc) { if (!unlockNotificationElement || !unlockImageElement || !unlockTextElement) return; if (notificationTimeout) clearTimeout(notificationTimeout); unlockTextElement.textContent = `"${itemName}" Desbloqueado!`; unlockImageElement.src = imageSrc; unlockImageElement.alt = itemName; unlockNotificationElement.classList.remove('hidden', 'visible'); void unlockNotificationElement.offsetWidth; unlockNotificationElement.classList.add('visible'); console.log("Mostrando notificação:", itemName); notificationTimeout = setTimeout(() => { unlockNotificationElement.classList.remove('visible'); notificationTimeout = null; console.log("Escondendo notificação:", itemName); }, NOTIFICATION_DURATION); }
+function showCompletionScreen() { const survivalRate = initialGoodDucklings > 0 ? (score / initialGoodDucklings) * 100 : 100; if (survivalRate >= THREE_STAR_THRESHOLD) starsEarned = 3; else if (survivalRate >= TWO_STAR_THRESHOLD) starsEarned = 2; else if (survivalRate >= ONE_STAR_THRESHOLD) starsEarned = 1; else starsEarned = 0; const phaseJustCompleted = currentPhase; console.log(`Fim Fase ${phaseJustCompleted} | Bons Iniciais: ${initialGoodDucklings} | Salvos: ${score} | Taxa: ${survivalRate.toFixed(1)}% | Duckstars: ${starsEarned}`); const previousHighest = highestPhaseReached; highestPhaseReached = Math.max(highestPhaseReached, phaseJustCompleted); const currentBestStars = phaseStars[phaseJustCompleted] || 0; phaseStars[phaseJustCompleted] = Math.max(currentBestStars, starsEarned); saveGameData(); let playerUnlockedSomething = false; customizations.forEach(cust => { if (cust.unlockPhasePlayer === phaseJustCompleted && phaseJustCompleted > previousHighest && cust.id !== 'default') { console.log(`Notificando desbloqueio JOGADOR: ${cust.name}`); displayUnlockNotification(cust.name, cust.playerFrames[0]); playerUnlockedSomething = true; } }); if (!playerUnlockedSomething) { customizations.forEach(cust => { const followerUnlockPhase = Math.max(1, cust.unlockPhasePlayer - 2); if (followerUnlockPhase === phaseJustCompleted && phaseJustCompleted > previousHighest && cust.id !== 'default') { console.log(`Notificando desbloqueio SEGUIDOR: ${cust.name}`); displayUnlockNotification(`${cust.name} (Patinho)`, cust.followerFrames[0]); } }); } for (let i = 0; i < 3; i++) { setStarAppearance(starElements[i], i < starsEarned); } completionPhaseElement.textContent = `Fase ${phaseJustCompleted} Completa!`; completionResultElement.textContent = `Patos Salvos: ${score} / ${initialGoodDucklings}`; starCountTextElement.textContent = `(${starsEarned} Duckstar${starsEarned !== 1 ? 's' : ''}!)`; canvas.classList.remove('hide-cursor'); completionOverlay.classList.remove('hidden'); }
+
+function update() {
+    if (gameComplete) return;
+    globalTick++;
+    updateDuck(player);
+    let leader = player; for (const follower of player.followers) { updateDuck(follower, leader); leader = follower; }
+    let goodDucksLeftInWild = false;
+    for (let i = wildDucklings.length - 1; i >= 0; i--) {
+        const duckling = wildDucklings[i];
+        if (!duckling.isFollowing && globalTick % 120 === 0 && Math.random() < 0.2) { duckling.targetX = duckling.x + (Math.random() - 0.5) * 50; duckling.targetY = duckling.y + (Math.random() - 0.5) * 50; }
+        updateDuck(duckling);
+        if (duckling.isEvil) { if (duckling.attackCooldown <= 0) { for (let j = player.followers.length - 1; j >= 0; j--) { const follower = player.followers[j]; if (distance(duckling, follower) < EVIL_ATTACK_RADIUS) { playLoadedSound(dieSoundBuffer, 1.0); player.followers.splice(j, 1); score--; updateScoreDisplay(); duckling.attackCooldown = EVIL_ATTACK_COOLDOWN; break; } } } }
+        else { // É bom
+            goodDucksLeftInWild = true;
+            if (distance(player, duckling) < RECRUIT_RADIUS) {
+                duckling.isFollowing = true;
+                duckling.targetX = player.x;
+                duckling.targetY = player.y;
+                // O duckling original já tem as propriedades corretas,
+                // resetDuckState só era necessário se precisasse *mudar* o visual.
+                // Como o visual do seguidor é definido na inicialização da fase,
+                // podemos adicionar o duckling original diretamente.
+                player.followers.unshift(duckling); // <<-- REVERTIDO PARA UNSHIFT
+                wildDucklings.splice(i, 1); // Remove dos selvagens
+                score++; updateScoreDisplay();
+                playLoadedSound(recruitSoundBuffer, 1.0);
+            }
+        }
+    }
+    if (!goodDucksLeftInWild && !gameComplete) {
+        console.log("Condição de conclusão atingida.");
+        gameComplete = true; stopBackgroundMusic(); playLoadedSound(completeSoundBuffer, 1.0);
+        showCompletionScreen();
+    }
+}
 
 // --- Renderização ---
-function drawDuck(duck) { const img = duck.images[duck.animationFrame]; const drawY = duck.y - duck.drawHeight / 2 - duck.bobbingOffset; if (duck.facingDirection === 'left') { ctx.save(); ctx.translate(duck.x, drawY + duck.drawHeight / 2); ctx.scale(-1, 1); ctx.drawImage(img, -duck.drawWidth / 2, -duck.drawHeight / 2, duck.drawWidth, duck.drawHeight); ctx.restore(); } else { ctx.drawImage(img, duck.x - duck.drawWidth / 2, drawY, duck.drawWidth, duck.drawHeight); } }
+function drawDuck(duck) { if (!duck.images || !duck.images[0] || !duck.images[1] || !duck.images[0].complete || !duck.images[1].complete) { return; } const img = duck.images[duck.animationFrame]; const drawY = duck.y - duck.drawHeight / 2 - duck.bobbingOffset; if (duck.facingDirection === 'left') { ctx.save(); ctx.translate(duck.x, drawY + duck.drawHeight / 2); ctx.scale(-1, 1); ctx.drawImage(img, -duck.drawWidth / 2, -duck.drawHeight / 2, duck.drawWidth, duck.drawHeight); ctx.restore(); } else { ctx.drawImage(img, duck.x - duck.drawWidth / 2, drawY, duck.drawWidth, duck.drawHeight); } }
 function draw() { if (gameComplete) { return; } ctx.clearRect(0, 0, canvasWidth, canvasHeight); wildDucklings.forEach(drawDuck); for (let i = player.followers.length - 1; i >= 0; i--) { drawDuck(player.followers[i]); } drawDuck(player); }
 function updateScoreDisplay() { scoreElement.textContent = `Patos Salvos: ${score}`; }
 // --- Loop Principal ---
@@ -110,15 +120,16 @@ function selectPlayerCustomization(customizationId) { const selectedOptionData =
 function selectFollowerCustomization(customizationId) { const selectedOptionData = customizations.find(c => c.id === customizationId); const followerUnlockPhase = Math.max(1, selectedOptionData.unlockPhasePlayer - 2); if (!selectedOptionData || followerUnlockPhase > highestPhaseReached) { return; } console.log("Seguidor Selecionado:", customizationId); selectedFollowerCustomizationId = customizationId; saveGameData(); followerCustomizationOptionsContainer.querySelectorAll('.customization-option').forEach(opt => { opt.classList.toggle('selected', opt.dataset.id === customizationId); }); }
 
 // --- Event Listeners ---
-function addButtonListeners(buttonElement) { buttonElement.addEventListener('click', () => { playLoadedSound(uiClickSoundBuffer, UI_CLICK_VOLUME); /* click.mp3 */ }); buttonElement.addEventListener('mouseenter', () => { playLoadedSound(hoverSoundBuffer, UI_HOVER_VOLUME); /* button.mp3 */ }); }
-addButtonListeners(startGameButton); addButtonListeners(customizeButton); addButtonListeners(backToMenuButton); addButtonListeners(nextPhaseSvgButton); addButtonListeners(retrySvgButton);
+function addButtonListeners(buttonElement) { buttonElement.addEventListener('click', () => { playLoadedSound(uiClickSoundBuffer, UI_CLICK_VOLUME); }); buttonElement.addEventListener('mouseenter', () => { playLoadedSound(hoverSoundBuffer, UI_HOVER_VOLUME); }); }
+addButtonListeners(startGameButton); addButtonListeners(customizeButton); addButtonListeners(backToMenuButton); addButtonListeners(nextPhaseSvgButton); addButtonListeners(retrySvgButton); addButtonListeners(backToMenuCompleteButton);
 startGameButton.addEventListener('click', () => { currentPhase = 1; showScreen('game-container'); initGame(); });
 customizeButton.addEventListener('click', () => { populateCustomizationOptions(); showScreen('customization-screen'); });
 backToMenuButton.addEventListener('click', () => { showScreen('main-menu'); });
 nextPhaseSvgButton.addEventListener('click', () => { if (gameComplete) { currentPhase++; showScreen('game-container'); initGame(); } });
 retrySvgButton.addEventListener('click', () => { if (gameComplete) { showScreen('game-container'); initGame(); } });
+backToMenuCompleteButton.addEventListener('click', () => { showScreen('main-menu'); });
 canvas.addEventListener('mousemove', (event) => { if (!gameComplete) { const rect = canvas.getBoundingClientRect(); player.targetX = event.clientX - rect.left; player.targetY = event.clientY - rect.top; } });
-canvas.addEventListener('click', (event) => { if (gameComplete) return; const rect = canvas.getBoundingClientRect(); const clickX = event.clientX - rect.left; const clickY = event.clientY - rect.top; let clickedEvilDuck = false; for (let i = wildDucklings.length - 1; i >= 0; i--) { const duckling = wildDucklings[i]; if (duckling.isEvil) { const dist = Math.sqrt((clickX - duckling.x)**2 + (clickY - duckling.y)**2); if (dist < CLICK_REMOVE_RADIUS) { console.log("Patinho mau espantado!"); playEvilDefeatSound(); wildDucklings.splice(i, 1); clickedEvilDuck = true; break; } } } if (!clickedEvilDuck) { playLoadedSound(gameClickSoundBuffer, GAME_CLICK_VOLUME); /* QUACK no canvas */ } });
+canvas.addEventListener('click', (event) => { if (gameComplete) return; const rect = canvas.getBoundingClientRect(); const clickX = event.clientX - rect.left; const clickY = event.clientY - rect.top; let clickedEvilDuck = false; for (let i = wildDucklings.length - 1; i >= 0; i--) { const duckling = wildDucklings[i]; if (duckling.isEvil) { const dist = Math.sqrt((clickX - duckling.x)**2 + (clickY - duckling.y)**2); if (dist < CLICK_REMOVE_RADIUS) { console.log("Patinho mau espantado!"); playEvilDefeatSound(); wildDucklings.splice(i, 1); clickedEvilDuck = true; break; } } } if (!clickedEvilDuck) { playLoadedSound(gameClickSoundBuffer, GAME_CLICK_VOLUME); } });
 window.addEventListener('resize', () => { canvasWidth = window.innerWidth; canvasHeight = window.innerHeight; canvas.width = canvasWidth; canvas.height = canvasHeight; if (!gameContainerScreen.classList.contains('hidden')) { stopBackgroundMusic(); console.log("Janela redimensionada durante o jogo. Reiniciando fase atual."); initGame(); ctx.imageSmoothingEnabled = false; } });
 
 // --- Início da Aplicação ---
