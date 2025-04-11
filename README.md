@@ -20,7 +20,7 @@ Jogue um jogo divertido e simples onde você é um pato e salva os patinhos, nã
 
 **Evite perder seus patinhos para os patos malvados:**
 
-![image](https://github.com/user-attachments/assets/5c20e93b-d5d0-46ec-997c-c77664424d83)
+![image](https://github.com/user-attachments/assets/46eb02a7-5d8a-4747-85df-751141e78b1b)
 
 **Update 1(Foi adicionado o botão para voltar ao menu e notificação de patos desbloqueados):**
 
