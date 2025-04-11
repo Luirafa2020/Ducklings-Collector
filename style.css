@@ -38,16 +38,48 @@
 #score { top: 15px; left: 15px; }
 #phase-display { top: 15px; right: 15px; }
 
-/* --- Overlay de Conclusão --- */
-#completion-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.88); color: white; padding: 25px 35px; border: 5px solid #cc8800; border-radius: 0; text-align: center; z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; image-rendering: pixelated; font-smooth: never; -webkit-font-smoothing: none; -moz-osx-font-smoothing: grayscale; }
-#completion-phase { font-size: 1.4em; color: #FFFF00; text-shadow: 2px 2px 0px #FF8C00; margin-bottom: 5px; }
-#completion-result { font-size: 0.9em; margin-bottom: 5px; }
+/* --- Overlays Genéricos (Conclusão e Game Over) --- */
+.overlay-panel { /* Estilos comuns aos dois overlays */
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.88); color: white;
+    padding: 25px 35px; border-radius: 0;
+    text-align: center; z-index: 20;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; font-family: 'Press Start 2P', cursive;
+    image-rendering: pixelated; font-smooth: never;
+    -webkit-font-smoothing: none; -moz-osx-font-smoothing: grayscale;
+    border: 5px solid #cc8800; /* Borda padrão (Completion) */
+}
+
+/* Títulos específicos */
+.overlay-title { font-size: 1.4em; margin-bottom: 5px; }
+#completion-phase { color: #FFFF00; text-shadow: 2px 2px 0px #FF8C00; } /* Amarelo para vitória */
+.game-over-title { color: #FF4444; text-shadow: 2px 2px 0px #8B0000; } /* Vermelho para Game Over */
+
+/* Textos específicos */
+.overlay-text { font-size: 0.9em; margin-bottom: 5px; }
+.game-over-text { margin-bottom: 15px; } /* Mais espaço abaixo do texto de Game Over */
+
+/* --- Overlay de Conclusão Específico --- */
+#completion-overlay { /* Estilos que SÓ se aplicam à conclusão */
+    border-color: #cc8800; /* Borda Dourada */
+}
 #star-container { display: flex; gap: 10px; margin-bottom: 0px; }
 .star-img { width: 72px; height: 72px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; }
 #star-count-text { font-size: 0.8em; margin-bottom: 10px; margin-top: 5px; }
+
+/* --- Overlay de Game Over Específico --- */
+#game-over-overlay {
+    border-color: #8B0000; /* Borda Vermelha Escura */
+}
+.game-over-buttons { margin-top: 15px; } /* Ajuste de margem para botões de game over */
+
+/* --- Botões nos Overlays --- */
 .button-container { display: flex; gap: 15px; margin-top: 10px; align-items: center; justify-content: center; }
 .pixel-button { width: 180px; height: 48px; cursor: url('./selection.png') 4 4, pointer; image-rendering: pixelated; transition: transform 0.08s ease-out; filter: drop-shadow(3px 3px 2px rgba(0,0,0,0.5)); }
-#back-to-menu-complete-button { width: 110px; height: 48px; }
+#back-to-menu-complete-button, #back-to-menu-game-over-button { width: 110px; height: 48px; } /* Tamanho do botão menu */
+
 
 /* --- Notificação de Desbloqueio (Visual Melhorado + Animação Slide) --- */
 #unlock-notification {
@@ -81,9 +113,6 @@
     transform: translateY(-170px); /* << Move para cima (valor = altura + bottom) */
     visibility: visible;
 }
-/* Quando não tem .visible, ele volta para transform: translateY(0) (estado inicial implícito),
-   mas como bottom está negativo, ele desce para fora da tela. */
-
 #unlock-notification img {
     width: 48px; /* Imagem maior */
     height: 48px;

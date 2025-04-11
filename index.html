@@ -13,7 +13,6 @@
 <body>
     <!-- Menu Principal -->
     <div id="main-menu" class="screen">
-        <!-- ... (conteúdo do menu inalterado) ... -->
         <h1>Ducklings Collector</h1>
         <div class="menu-button-container">
             <svg viewBox="0 0 200 56" class="pixel-menu-svg-button" id="start-game-button" shape-rendering="crispEdges"> <defs> <style> .svg-button-text-menu { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs> <rect x="6" y="7" width="188" height="42" fill="#1B331C" opacity="0.7"/> <rect x="4" y="5" width="190" height="44" fill="#1B5E20"/> <rect class="button-bg" x="4" y="2" width="190" height="43" fill="#388E3C"/> <rect x="4" y="2" width="190" height="5" fill="#4CAF50"/><rect x="4" y="2" width="5" height="43" fill="#4CAF50"/><rect x="6" y="42" width="188" height="5" fill="#1B5E20"/><rect x="192" y="7" width="5" height="38" fill="#1B5E20"/> <text class="svg-button-text-menu" x="101" y="25" fill="#1B331C">Iniciar Jogo</text> <text class="svg-button-text-menu main-text" x="100" y="24" fill="white">Iniciar Jogo</text> <animate xlink:href=".main-text" attributeName="x" values="100;101" dur="0.05s" begin="start-game-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="24;25" dur="0.05s" begin="start-game-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="x" values="101;100" dur="0.1s" begin="start-game-button.mouseup;start-game-button.mouseout" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="25;24" dur="0.1s" begin="start-game-button.mouseup;start-game-button.mouseout" fill="freeze"/> </svg>
@@ -43,14 +42,15 @@
         <div id="score">Patos Salvos: 0</div>
         <div id="phase-display">Fase: 1</div>
         <canvas id="gameCanvas"></canvas>
-        <div id="completion-overlay" class="hidden">
-             <div id="completion-phase">Fase X Completa!</div>
-             <div id="completion-result">Patos Salvos: Y / Z</div>
+
+        <!-- Overlay de Conclusão de Fase -->
+        <div id="completion-overlay" class="overlay-panel hidden">
+             <div class="overlay-title" id="completion-phase">Fase X Completa!</div>
+             <div class="overlay-text" id="completion-result">Patos Salvos: Y / Z</div>
              <div id="star-container"> <img src="./star-empty.png" alt="Estrela 1" class="star-img" id="star1"> <img src="./star-empty.png" alt="Estrela 2" class="star-img" id="star2"> <img src="./star-empty.png" alt="Estrela 3" class="star-img" id="star3"> </div>
-             <div id="star-count-text"></div>
+             <div class="overlay-text" id="star-count-text"></div>
              <div class="button-container completion-buttons"> <!-- Classe específica -->
                   <svg viewBox="0 0 180 48" class="pixel-button" id="retry-svg-button" shape-rendering="crispEdges"> <defs> <style> .svg-button-text-overlay { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs> <rect x="6" y="7" width="168" height="34" fill="#440000" opacity="0.7"/><rect x="4" y="5" width="170" height="36" fill="#880E4F"/><rect class="button-bg" id="retry-bg" x="4" y="2" width="170" height="35" fill="#D32F2F"/><rect x="4" y="2" width="170" height="4" fill="#F44336"/><rect x="4" y="2" width="4" height="35" fill="#F44336"/><rect x="6" y="34" width="168" height="4" fill="#B71C1C"/><rect x="172" y="6" width="4" height="31" fill="#B71C1C"/> <text class="svg-button-text-overlay" x="91" y="21" fill="#440000">Tentar Novamente</text> <text class="svg-button-text-overlay main-text" x="90" y="20" fill="white">Tentar Novamente</text> <animate xlink:href=".main-text" attributeName="x" values="90;91" dur="0.05s" begin="retry-svg-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="20;21" dur="0.05s" begin="retry-svg-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="x" values="91;90" dur="0.1s" begin="retry-svg-button.mouseup;retry-svg-button.mouseout" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="21;20" dur="0.1s" begin="retry-svg-button.mouseup;retry-svg-button.mouseout" fill="freeze"/> </svg>
-                  <!-- Botão Menu Principal (NOVO) -->
                   <svg viewBox="0 0 120 48" class="pixel-button" id="back-to-menu-complete-button" shape-rendering="crispEdges">
                       <defs> <style> .svg-button-text-overlay-small { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs>
                       <rect x="6" y="7" width="108" height="34" fill="#111" opacity="0.7"/> <rect x="4" y="5" width="110" height="36" fill="#333"/> <rect class="button-bg" x="4" y="2" width="110" height="35" fill="#555"/> <rect x="4" y="2" width="110" height="4" fill="#777"/><rect x="4" y="2" width="4" height="35" fill="#777"/> <rect x="6" y="34" width="108" height="4" fill="#222"/><rect x="112" y="6" width="4" height="31" fill="#222"/>
@@ -62,10 +62,27 @@
                   <svg viewBox="0 0 180 48" class="pixel-button" id="next-phase-svg-button" shape-rendering="crispEdges"> <defs> <style> .svg-button-text-overlay { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs> <rect x="6" y="7" width="168" height="34" fill="#1B331C" opacity="0.7"/><rect x="4" y="5" width="170" height="36" fill="#1B5E20"/><rect class="button-bg" id="next-bg" x="4" y="2" width="170" height="35" fill="#388E3C"/><rect x="4" y="2" width="170" height="4" fill="#4CAF50"/><rect x="4" y="2" width="4" height="35" fill="#4CAF50"/><rect x="6" y="34" width="168" height="4" fill="#1B5E20"/><rect x="172" y="6" width="4" height="31" fill="#1B5E20"/> <text class="svg-button-text-overlay" x="91" y="21" fill="#1B331C">Próxima Fase</text> <text class="svg-button-text-overlay main-text" x="90" y="20" fill="white">Próxima Fase</text> <animate xlink:href=".main-text" attributeName="x" values="90;91" dur="0.05s" begin="next-phase-svg-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="20;21" dur="0.05s" begin="next-phase-svg-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="x" values="91;90" dur="0.1s" begin="next-phase-svg-button.mouseup;next-phase-svg-button.mouseout" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="21;20" dur="0.1s" begin="next-phase-svg-button.mouseup;next-phase-svg-button.mouseout" fill="freeze"/> </svg>
              </div>
         </div>
-        <!-- Fim Overlay -->
+
+        <!-- Overlay de Game Over (NOVO) -->
+        <div id="game-over-overlay" class="overlay-panel hidden">
+            <div class="overlay-title game-over-title">GAME OVER</div>
+            <div class="overlay-text game-over-text">Muitos patinhos perdidos rapidamente!</div>
+            <div class="button-container game-over-buttons">
+                 <svg viewBox="0 0 180 48" class="pixel-button" id="retry-game-over-button" shape-rendering="crispEdges"> <defs> <style> .svg-button-text-overlay { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs> <rect x="6" y="7" width="168" height="34" fill="#440000" opacity="0.7"/><rect x="4" y="5" width="170" height="36" fill="#880E4F"/><rect class="button-bg" id="retry-go-bg" x="4" y="2" width="170" height="35" fill="#D32F2F"/><rect x="4" y="2" width="170" height="4" fill="#F44336"/><rect x="4" y="2" width="4" height="35" fill="#F44336"/><rect x="6" y="34" width="168" height="4" fill="#B71C1C"/><rect x="172" y="6" width="4" height="31" fill="#B71C1C"/> <text class="svg-button-text-overlay" x="91" y="21" fill="#440000">Tentar Novamente</text> <text class="svg-button-text-overlay main-text" x="90" y="20" fill="white">Tentar Novamente</text> <animate xlink:href=".main-text" attributeName="x" values="90;91" dur="0.05s" begin="retry-game-over-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="20;21" dur="0.05s" begin="retry-game-over-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="x" values="91;90" dur="0.1s" begin="retry-game-over-button.mouseup;retry-game-over-button.mouseout" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="21;20" dur="0.1s" begin="retry-game-over-button.mouseup;retry-game-over-button.mouseout" fill="freeze"/> </svg>
+                 <svg viewBox="0 0 120 48" class="pixel-button" id="back-to-menu-game-over-button" shape-rendering="crispEdges">
+                     <defs> <style> .svg-button-text-overlay-small { font-family: 'Press Start 2P', cursive; font-size: 10px; text-anchor: middle; dominant-baseline: central; } </style> </defs>
+                     <rect x="6" y="7" width="108" height="34" fill="#111" opacity="0.7"/> <rect x="4" y="5" width="110" height="36" fill="#333"/> <rect class="button-bg" x="4" y="2" width="110" height="35" fill="#555"/> <rect x="4" y="2" width="110" height="4" fill="#777"/><rect x="4" y="2" width="4" height="35" fill="#777"/> <rect x="6" y="34" width="108" height="4" fill="#222"/><rect x="112" y="6" width="4" height="31" fill="#222"/>
+                     <text class="svg-button-text-overlay-small" x="61" y="21" fill="#111">Menu</text>
+                     <text class="svg-button-text-overlay-small main-text" x="60" y="20" fill="white">Menu</text>
+                     <animate xlink:href=".main-text" attributeName="x" values="60;61" dur="0.05s" begin="back-to-menu-game-over-button.mousedown" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="20;21" dur="0.05s" begin="back-to-menu-game-over-button.mousedown" fill="freeze"/>
+                     <animate xlink:href=".main-text" attributeName="x" values="61;60" dur="0.1s" begin="back-to-menu-game-over-button.mouseup;back-to-menu-game-over-button.mouseout" fill="freeze"/> <animate xlink:href=".main-text" attributeName="y" values="21;20" dur="0.1s" begin="back-to-menu-game-over-button.mouseup;back-to-menu-game-over-button.mouseout" fill="freeze"/>
+                 </svg>
+            </div>
+       </div>
+       <!-- Fim Overlay Game Over -->
     </div>
 
-    <!-- Div para Notificação de Desbloqueio (Inicialmente escondida) -->
+    <!-- Div para Notificação de Desbloqueio -->
     <div id="unlock-notification" class="hidden">
         <img id="unlock-image" src="" alt="Item Desbloqueado" />
         <span id="unlock-text">Item Desbloqueado!</span>
