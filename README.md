@@ -16,3 +16,5 @@
 ![image](https://github.com/user-attachments/assets/5c20e93b-d5d0-46ec-997c-c77664424d83)
 
 Link do jogo: https://luirafa2020.github.io/Ducklings-Collector/
+
+---------Feito com a ajuda do Gemini 2.5 Pro---------
