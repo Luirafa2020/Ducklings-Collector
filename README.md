@@ -1,5 +1,7 @@
 # Ducklings Collector
 
+Jogue um jogo divertido e simples onde você é um pato e salva os patinhos, não deixe os patos malvados matarem os seus patinhos, salve eles e desbloqueie skins, link do jogo logo abaixo:
+
 **Início do jogo:**
 ![image](https://github.com/user-attachments/assets/d7e93577-cc7d-4434-97fd-e24bc56f594c)
 
