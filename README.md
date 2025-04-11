@@ -26,8 +26,6 @@ Jogue um jogo divertido e simples onde você é um pato e salva os patinhos, nã
 
 ![Captura de tela 2025-04-11 122134](https://github.com/user-attachments/assets/0557338e-e4cb-416c-aef0-a208371d8acd)
 
-![image](https://github.com/user-attachments/assets/64e8ced4-70ba-4767-9b17-84a239d35d7a)
-
 Link do jogo: https://luirafa2020.github.io/Ducklings-Collector/
 
 ---------Feito com a ajuda do Gemini 2.5 Pro---------
